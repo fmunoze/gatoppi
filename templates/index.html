@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gato observador</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="cat">
+        <div class="ear ear--left"></div>
+        <div class="ear ear--right"></div>
+        <div class="face">
+            <div class="eye eye--left">
+                <div class="eye-pupil"></div>
+            </div>
+            <div class="eye eye--right">
+                <div class="eye-pupil"></div>
+            </div>
+            <div class="muzzle"></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            // Detectar el evento mousemove
+            $(document).mousemove(function(event) {
+
+                // Obtener las coordenadas del cursor
+                var cursorX = event.pageX;
+                var cursorY = event.pageY;
+
+                $.ajax({
+                    // Realizar una solicitud POST
+                    type: 'POST',
+                    url: '/get_pupil_position',
+
+                    // Enviar las coordenadas del cursor
+                    data: {'cursorX': cursorX, 'cursorY': cursorY},
+
+                    success: function(response) {
+
+                        // Obtener las nuevas coordenadas de las pupilas del gato
+                        var pupilX = response.pupilX;
+                        var pupilY = response.pupilY;
+
+                        // Actualizar la posición de las pupilas del gato
+                        $('.eye-pupil').css({
+                            'transform': 'translate(' + pupilX + 'px, ' + pupilY + 'px)'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
